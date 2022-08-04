@@ -1,31 +1,24 @@
-import React from "react";
-import uniqid from "uniqid";
+import React, { useEffect, useState } from "react";
 import "./Employment.css";
 
-class Employment extends React.Component {
-  constructor(props) {
-    super(props);
+const Employment = (props) => {
+  const [employmentList, setEmploymentList] = useState([]);
 
-    this.state = {
-      employmentList: [],
-    };
-  }
+  useEffect(() => {
+    setEmploymentList(employmentList =>
+      employmentList.concat([
+        {
+          employer: props.prevEmp.employer,
+          startYear: props.prevEmp.startYear,
+          endYear: props.prevEmp.endYear,
+          role: props.prevEmp.role,
+          key: props.prevEmp.key,
+        },
+      ]).filter(emp => emp.employer !== undefined)
+    );
+  }, [props]);
 
-  componentDidUpdate(prevProps) {
-    if (this.props.id !== prevProps.id) {
-      this.setState({
-        employmentList: this.state.employmentList.concat({
-          employer: this.props.employer,
-          startYear: this.props.startYear,
-          endYear: this.props.endYear,
-          role: this.props.role,
-          id: uniqid(),
-        }),
-      });
-    }
-  }
-
-  listToHTML(list) {
+  const listToHTML = (list) => {
     return list.map((ele) => {
       return (
         <div className="employment">
@@ -36,11 +29,9 @@ class Employment extends React.Component {
         </div>
       );
     });
-  }
+  };
 
-  render() {
-    return <div id="container">{this.listToHTML(this.props.prevEmp)}</div>;
-  }
-}
+  return <div id="container">{listToHTML(employmentList)}</div>;
+};
 
 export default Employment;
